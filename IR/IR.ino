@@ -1,7 +1,7 @@
 // 1 corresponds to no object, 0 corresponds to seeing an object
 
-int leftReciever = 10;
-int leftLED = 9;
+int leftReciever = 13;
+int leftLED = 10;
 int rightReciever = 3;
 int rightLED = 2;
 
@@ -13,8 +13,8 @@ void setup() {
   pinMode(leftLED, OUTPUT);   // Left IR LED
   pinMode(rightReciever, INPUT);    // Right reciever
   pinMode(rightLED, OUTPUT);   // Right IR LED
+  pinMode(9, OUTPUT);
   pinMode(8, OUTPUT);
-  pinMode(7, OUTPUT);
 
   Serial.begin(9600);
 }
