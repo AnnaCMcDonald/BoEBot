@@ -7,14 +7,13 @@ byte irLeftOld;
 byte irRightOld;
 int counter;
 
-int leftReciever = 13;
-int leftLED = 10;
-int leftIndicator = 9;
+int leftReciever = 10;
+int leftLED = 9;
 int rightReciever = 3;
 int rightLED = 2;
-int rightIndicator = 8;
 int leftServo = 12;
 int rightServo = 11;
+int dir = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -25,8 +24,6 @@ void setup() {
   pinMode(rightLED, OUTPUT); // Right LED
   pinMode(leftReciever, INPUT);  // Right IR
   pinMode(rightReciever, INPUT);  // Left IR
-  pinMode(leftIndicator, OUTPUT); // Left indicator LED
-  pinMode(rightIndicator, OUTPUT); // Right indicator LED
   servoLeft.attach(leftServo);
   servoRight.attach(rightServo);
   
@@ -53,32 +50,18 @@ void loop() {
       counter = 0;
     }
   }
-  if(irLeft == 0 && irRight == 0){
-    digitalWrite(leftIndicator, HIGH);
-    digitalWrite(rightIndicator, HIGH);
-    drive(1000, 0);
-    turn(400, 0);
+  if(irLeft == 0 || irRight == 0){
+    drive(500, 1);
   } else if (irLeft == 0 && irRight == 1){
-    digitalWrite(rightIndicator, LOW);
-    digitalWrite(leftIndicator, HIGH);
-    drive(1000, 0);
-    turn(400, 1);
+    turn(250, 0);
+    drive(250, 1);
+    dir = 0;
   } else if(irLeft == 1 && irRight == 0){
-    digitalWrite(leftIndicator, LOW);
-    digitalWrite(rightIndicator, HIGH);
-    drive(1000, 0);
-    turn(400, 0);
-  } else{
-    digitalWrite(leftIndicator, LOW);
-    digitalWrite(rightIndicator, LOW);
-    drive(20, 1);
-  }
-
-  if(irRight == 0)
-  {
-    digitalWrite(rightIndicator, HIGH);
+    turn(250, 1);
+    drive(250, 1);
+    dir = 1;
   } else {
-    digitalWrite(rightIndicator, LOW);
+    turn(250, dir);
   }
 
 }
@@ -87,13 +70,19 @@ void turn(int time, bool dir){
     if (dir==1){
       servoLeft.writeMicroseconds(1700);
       servoRight.writeMicroseconds(1700);
-      delay(time);
+      delay(time/2);
+      servoLeft.writeMicroseconds(1600);
+      servoRight.writeMicroseconds(1600);
+      delay(time/2);
       servoLeft.writeMicroseconds(1500);
       servoRight.writeMicroseconds(1500);
     } else{
       servoLeft.writeMicroseconds(1300);
       servoRight.writeMicroseconds(1300);
-      delay(time);
+      delay(time/2);
+      servoLeft.writeMicroseconds(1400);
+      servoRight.writeMicroseconds(1400);
+      delay(time/2);
       servoLeft.writeMicroseconds(1500);
       servoRight.writeMicroseconds(1500);      
     }
@@ -116,5 +105,5 @@ int irDetect(int irLedPin, int irRecieverPin, long frequency){
   delay(1);
   int ir = digitalRead(irRecieverPin);  
   delay(1);     // Wait before recheck
-  return ir;    // Returns 1 no detect, o detect
+  return ir;    // Returns 1 no detect, 0 detect
 }
